@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<P>
+  <business>
+    <id_company>{COMPANY_ID}</id_company>
+    <id_branch>{BRANCH_ID}</id_branch>
+    <user>{USER}</user>
+    <pwd>{SECRET}</pwd>
+  </business>
+  <url>
+    <reference>REFERENCE</reference>
+    <amount>AMOUNT</amount>
+    <moneda>MXN</moneda>
+    <canal>W</canal>
+    <omitir_notif_default>1</omitir_notif_default>
+    <promociones>C</promociones>
+    <st_correo>1</st_correo>
+    <mail_cliente>CUSTOMER_EMAIL</mail_cliente>
+    <data3ds>
+      <ml>CUSTOMER_EMAIL</ml>
+      <cl>PHONE_NUMBER</cl>
+      <dir>ADDRESS_LINE_1</dir>
+      <cd>CITY</cd>
+      <est>EST</est>
+      <cp>POSTAL_CODE</cp>
+      <idc>IDC</idc>
+    </data3ds>
+    <version>IntegraWPP</version>
+  </url>
+</P>

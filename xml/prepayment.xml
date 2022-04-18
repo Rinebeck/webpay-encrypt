@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<P>
+  <business>
+    <id_company>{COMPANY_ID}</id_company>
+    <id_branch>{BRANCH_ID}</id_branch>
+    <user>{USER}</user>
+    <pwd>{SECRET}</pwd>
+  </business>
+  <url>
+    <reference>REFERENCE</reference>
+    <amount>AMOUNT</amount>
+    <moneda>MXN</moneda>
+    <canal>W</canal>
+    <mail_cliente>CUSTOMER_EMAIL</mail_cliente>
+    <prepago>1</prepago>
+    <version>IntegraWPP</version>
+  </url>
+</P>

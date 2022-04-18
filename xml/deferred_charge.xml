@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<P>
+  <business>
+    <id_company>{COMPANY_ID}</id_company>
+    <id_branch>{BRANCH_ID}</id_branch>
+    <user>{USER}</user>
+    <pwd>{SECRET}</pwd>
+  </business>
+  <url>
+    <reference>FACTURA999</reference>
+    <amount>1.00</amount>
+    <moneda>MXN</moneda>
+    <canal>W</canal>
+    <omitir_notif_default>1</omitir_notif_default>
+    <promociones>MONTHLY_PAYMENTS</promociones>
+    <st_correo>1</st_correo>
+    <fh_vigencia>VALIDITY</fh_vigencia>
+    <mail_cliente>CUSTOMER_EMAIL</mail_cliente>
+    <version>IntegraWPP</version>
+  </url>
+</P>
