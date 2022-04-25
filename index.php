@@ -1,9 +1,11 @@
 <?php
+// turn on all errors
+error_reporting(E_ALL);
 
-require "AES.php";
-require "constants.php";
+require_once("AES.php");
+require_once("constants.php");
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 
 $aes = new AES(CYPHER_KEY);
 
@@ -29,10 +31,11 @@ if (isset($_POST['accion']) && $_POST['accion'] == 'encriptar') {
 
     $aes->setXMLString($xml);
 
-    $key128 = $_POST['key128'];
     if ($aes->validateXML()) {
-        $ciphertext = $aes->encriptar();
-        echo json_encode(["cipher" => $ciphertext]);
+        $ciphertext = $aes->encryptXml();
+        $aes->setData($ciphertext);
+        $aes->send();
+        echo json_encode(['response' => $aes->getResponse()]);
     } else {
         echo json_encode(["error" => "Invalid XML string."]);
     }
@@ -44,8 +47,21 @@ if (isset($_POST['accion']) && $_POST['accion'] == 'encriptar') {
     }
     $aes->setEncryptedString($_POST['cadena']);
     $key128 = $_POST['key128'];
-    $plaintext = $aes->desencriptar();
+    $plaintext = $aes->decrypt();
     echo json_encode(["plain" => $plaintext]);
+} else if (isset($_POST['accion']) && $_POST['accion'] == 'generar_key') {
+/* $cvv = mb_convert_encoding("752", "UTF-8");
+
+$bankKey = mb_convert_encoding("A9279120481620090622AA30", "UTF-8");
+
+$aesCipher = new AesCipher($bankKey);
+
+$cvvencrypt = $aesCipher->encrypt($cvv);
+
+$decrypted = $aesCipher->decrypt($cvvencrypt);
+
+var_dump(["cvv" => $cvv, "encrypt" => $cvvencrypt, "decrypt" => $decrypted]); */
+
 } else {
     echo json_encode(["error" => "No action specified."]);
 }

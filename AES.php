@@ -1,18 +1,25 @@
 <?php
 
+require_once("constants.php");
 /**
- * @author Mercadotecnia, Ideas y Tecnologia
- * @version 1.0
- * @date 2017/10/10
+ * @author Rinebeck
+ * @version 1.1
+ * @date 2022/04/18
  * 
  * En php.ini habilitar la linea extension=php_openssl.dll (o equivalente a linux)
  */
 
 class AES
 {
+  private const CIPHER_KEY_LEN = 16;
+  private const REQUEST_URL = "https://bc.mitec.com.mx/p/gen";
+  private const CYPHER_ALGO = "AES-128-CBC";
+
   private $key128;
   private $xmlString;
   private $encryptedString;
+  private $data;
+  private $response;
 
   function __construct($key128)
   {
@@ -25,10 +32,10 @@ class AES
    * @return String con la cadena encriptada
    */
 
-  public function encriptar()
+  public function encryptXml()
   {
-    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-128-cbc'));
-    $cipherText = openssl_encrypt($this->xmlString, 'AES-128-CBC', hex2bin($this->key128), 1, $iv);
+    $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length(strtolower(static::CYPHER_ALGO)));
+    $cipherText = openssl_encrypt($this->xmlString, static::CYPHER_ALGO, hex2bin($this->key128), 1, $iv);
     return base64_encode($iv . $cipherText);
   }
 
@@ -39,12 +46,12 @@ class AES
    * @return String con la cadena descifrada
    */
 
-  public function desencriptar()
+  public function decrypt()
   {
     $encodedInitialData = base64_decode($this->encryptedString);
     $iv = substr($encodedInitialData, 0, 16);
     $encodedInitialData = substr($encodedInitialData, 16);
-    $decrypted = openssl_decrypt($encodedInitialData, 'AES-128-CBC', hex2bin($this->key128), 1, $iv);
+    $decrypted = openssl_decrypt($encodedInitialData, static::CYPHER_ALGO, hex2bin($this->key128), 1, $iv);
     return $decrypted;
   }
 
@@ -63,6 +70,11 @@ class AES
     $this->encryptedString = $encrypted;
   }
 
+  public function setData($data)
+  {
+    $this->data = $data;
+  }
+
   public function validateXML()
   {
     $xml = new DOMDocument();
@@ -70,14 +82,60 @@ class AES
     return $xml->schemaValidate("xml/validate.xsd");
   }
 
-  public function send($key, $data)
+  /**
+   * Selecciona los primeros 16 byte del hash de la clave
+   * 
+   * @return string 16 bytes de del hash de la clave enviada por el Banco
+   */
+  private function getFixedKey()
   {
-    $ivlen = openssl_cipher_iv_length('AES-128-CBC');
+    if (strlen(DATA_ZERO) < static::CIPHER_KEY_LEN) {
+      //0 pad to len 16
+      return str_pad(DATA_ZERO, static::CIPHER_KEY_LEN, "0");
+    }
+
+    if (strlen(DATA_ZERO) > static::CIPHER_KEY_LEN) {
+      //truncate to 16 bytes
+      return substr(DATA_ZERO, 0, static::CIPHER_KEY_LEN);
+    }
+
+    return DATA_ZERO;
+  }
+
+  private function encrypt()
+  {
+    $ivlen = openssl_cipher_iv_length(static::CYPHER_ALGO);
     $iv = openssl_random_pseudo_bytes($ivlen);
-    $encodedEncryptedData = base64_encode(openssl_encrypt($data, 'aes-128-cbc', AesCipher::fixKey($key), OPENSSL_RAW_DATA, $iv));
+    $encodedEncryptedData = base64_encode(openssl_encrypt($this->data, static::CYPHER_ALGO, static::getFixedKey(), OPENSSL_RAW_DATA, $iv));
     $encodedIV = base64_encode($iv);
     $encryptedPayload = $encodedEncryptedData . ":" . $encodedIV;
 
     return base64_encode($encryptedPayload);
+  }
+
+  public function send()
+  {
+    $payload = $this->encrypt();
+    // var_dump($this->data);exit;
+    // send the request
+    $postfields = str_replace(
+      ["{DATA_ZERO}", "{DATA}"],
+      [DATA_ZERO, $payload],
+      "xml=<pgs><data0>{DATA_ZERO}</data0><data>{DATA}</data></pgs>",
+    );
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, static::REQUEST_URL);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return $this->response = $response;
+  }
+
+  public function getResponse()
+  {
+    return $this->response;
   }
 }
