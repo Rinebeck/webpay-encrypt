@@ -15,6 +15,6 @@ const getPaymentURL = (amount, email) => {
 
   return fetch(ENDPOINT_URL, requestOptions)
     .then((response) => response.json())
-    .then((result) => result)
+    .then((result) => result.response)
     .catch((error) => console.log("error", error));
 };
