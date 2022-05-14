@@ -16,7 +16,6 @@
     <st_correo>1</st_correo>
     <fh_vigencia>{DATE}</fh_vigencia>
     <mail_cliente>{CUSTOMER_EMAIL}</mail_cliente>
-    <datos_adicionales></datos_adicionales>
     <version>IntegraWPP</version>
   </url>
 </P>

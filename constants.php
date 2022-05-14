@@ -16,6 +16,4 @@ const BRANCH_ID = "0001";
 const USER = "YYWASIUS0";
 const SECRET = "VB5RCQ0LME";
 
-const FIXED_KEY = "SNDBX123";
-
 const DATA_ZERO = "9265656036";
