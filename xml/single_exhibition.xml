@@ -12,7 +12,7 @@
     <moneda>MXN</moneda>
     <canal>W</canal>
     <omitir_notif_default>0</omitir_notif_default>
-    <promociones>C</promociones>
+    <promociones>C,3,6,9,12</promociones>
     <st_correo>1</st_correo>
     <fh_vigencia>{DATE}</fh_vigencia>
     <mail_cliente>{CUSTOMER_EMAIL}</mail_cliente>
